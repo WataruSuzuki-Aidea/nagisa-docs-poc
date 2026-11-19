@@ -1,0 +1,69 @@
+/*
+ * Starlight のアクセント色を、NAGI(SA) の primary にそろえる。
+ * 値は nagisa-tokens（supernova.tailwind.css / themes/dark.css）のトークンと同じ。
+ *
+ * Starlight の 3 段のアクセント色と、NAGI(SA) のトークンの対応
+ *   ライト  accent-low  = bg-color-primarycontainer-default（sky-100）
+ *           accent      = bg-color-primary-default（sky-600）  … リンク、選択中のメニュー
+ *           accent-high = bg-color-primary-bold2（sky-800）
+ *   ダーク  accent-low  = bg-color-primarycontainer-default（sky-900）
+ *           accent      = bg-color-primary-default（sky-500）
+ *           accent-high = text-color-primary-default（sky-400）  … リンク
+ */
+:root {
+	--color-global-color-sky-100: oklch(95.74% 0.025 225.43);
+	--color-global-color-sky-400: oklch(75.12% 0.14 233.3);
+	--color-global-color-sky-500: oklch(68.47% 0.148 237.34);
+	--color-global-color-sky-600: oklch(60.19% 0.134 238.45);
+	--color-global-color-sky-800: oklch(45.62% 0.096 236.25);
+	--color-global-color-sky-900: oklch(40.72% 0.08 233.95);
+
+	/* 左のサイドバーの幅。Starlight の既定は 18.75rem（300px） */
+	--sl-sidebar-width: 17rem;
+
+	/* ダーク（Starlight の既定のテーマ） */
+	--sl-color-accent-low: var(--color-global-color-sky-900);
+	--sl-color-accent: var(--color-global-color-sky-500);
+	--sl-color-accent-high: var(--color-global-color-sky-400);
+}
+
+:root[data-theme='light'] {
+	--sl-color-accent-low: var(--color-global-color-sky-100);
+	--sl-color-accent: var(--color-global-color-sky-600);
+	--sl-color-accent-high: var(--color-global-color-sky-800);
+
+	/* ヘッダーと左のサイドバーの背景色（ライトテーマだけ） */
+	--sl-color-bg-nav: #fafdff;
+	--sl-color-bg-sidebar: #fafdff;
+}
+
+/*
+ * 左のサイドバーで、上の階層のメニュー（基本要素、デザイントークンなどのグループ名と、
+ * 最上位のリンク）の文字を、Starlight の既定より 1 段小さくする。
+ *   画面幅 50rem 以上：16px（--sl-text-base）→ 14px（--sl-text-sm）
+ *   画面幅 50rem 未満：18px（--sl-text-lg） → 16px（--sl-text-base）
+ */
+.sidebar-content .large {
+	font-size: var(--sl-text-base);
+}
+@media (min-width: 50rem) {
+	.sidebar-content .large {
+		font-size: var(--sl-text-sm);
+	}
+
+	/*
+	 * Starlight は、サイドバーにスクロールバーの幅を常に確保している（scrollbar-gutter: stable）。
+	 * そのぶん右の余白が左より広く見えるため、スクロールバーが出るときだけ幅を取るようにする。
+	 */
+	.sidebar-pane {
+		scrollbar-gutter: auto;
+	}
+}
+
+/* 表の短い列（番号・名前など）が 1 文字ずつ折り返されないようにする */
+.sl-markdown-content :is(th, td) {
+	min-width: 4.5em;
+}
+.sl-markdown-content :is(th, td):first-child {
+	min-width: 3em;
+}

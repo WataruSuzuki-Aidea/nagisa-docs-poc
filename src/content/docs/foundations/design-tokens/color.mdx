@@ -1,0 +1,76 @@
+---
+title: 色
+description: UIデザインの基本要素（色、タイポグラフィ、サイズ、空白、境界線、影、効果など）の名前と値のセットで構成される、デザインの共通言語です。
+visibility: public
+---
+
+import TokenTable from '../../../../components/TokenTable.astro';
+
+## エイリアストークンの概要
+
+### 4階層目までの区分
+
+| トークン | 説明 |
+| --- | --- |
+| `ngi.alias.color.background.*` | 背景色用のトークンです。 |
+| `ngi.alias.color.foreground.*` | 前景色用のトークンです。<br />文字・アイコンで利用します。 |
+| `ngi.alias.color.border.*` | 境界線色用のトークンです。 |
+
+### 5階層目以降
+
+| トークン | 説明 |
+| --- | --- |
+| `{カテゴリ}` | 特定の意味・用途で使われる色 |
+| `{カテゴリ}Container` | カテゴリの色のうち、広めの領域で使う背景色 |
+| `on{カテゴリ}` | `{カテゴリ}`を背景とした場合の前景色<br />文字・アイコン・線などで利用 |
+| `on{カテゴリ}Container` | `{カテゴリ}Container`を背景とした場合の前景色<br />文字・アイコン・線などで利用 |
+
+### カテゴリの種類
+
+| 種類 | 説明 |
+| --- | --- |
+| base | 基本色 |
+| variant | 基本色のバリエーション |
+| inverse | 基本色の反転色 |
+| primary | プライマリーカラー |
+| secondary | セカンダリカラー |
+| tertiary | ターシャリーカラー |
+| support | プライマリー・セカンダリー・ターシャリーカラーとは別に局所的に目立たせたい場合に利用 |
+| danger | エラーや破壊的な操作を行う際など強い注意を引く必要がある場合に利用する |
+| warning | dangerほどではないが注意が必要な場合に利用する |
+| success | 成功を示す場合に利用する |
+| info | 情報提供を目的とする場合に利用する |
+| required | 必須であることを示す場合に利用する |
+| neutral | 強調がないニュートラルな状態を示す場合に利用する |
+| disabled | disabled時の色 |
+| selected | 選択時の色 |
+
+### 修飾子（モディファイアー）の種類
+
+| 種類 | 説明 |
+| --- | --- |
+| default | デフォルト |
+| subtle | 弱めの表現<br />更に弱い表現の場合は末尾に数字が追加される<br />例：subtle2, subtle3（数字が大きいほど弱い表現） |
+| bold | 強めの表現<br />更に強い表現の場合は末尾に数字が追加される<br />例：bold2, bold3（数字が大きいほど強い表現） |
+| hover | ホバー時の色 |
+| pressed | 押下時の色 |
+
+## 色
+
+### エイリアストークン
+
+#### 背景色
+
+<TokenTable kind="alias" prefix="bg-color" />
+
+#### 前景色
+
+<TokenTable kind="alias" prefix="text-color" />
+
+#### 境界線色
+
+<TokenTable kind="alias" prefix="border-color" />
+
+### グローバルトークン
+
+<TokenTable kind="global" />

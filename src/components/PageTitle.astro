@@ -1,0 +1,57 @@
+---
+// Starlight のページタイトルの下に、同じフォルダのページへのタブを表示する。
+// frontmatter に tab（タブの名前）を書いたページだけが対象。並び順は sidebar.order。
+// Supernova の「概要 / ガイドライン / React」のタブの置き換え。
+import Default from '@astrojs/starlight/components/PageTitle.astro';
+import { getCollection } from 'astro:content';
+
+const { entry } = Astro.locals.starlightRoute;
+const parts = entry.id.split('/');
+const dir = parts.slice(0, -1).join('/');
+
+const tabs = entry.data.tab
+	? (
+			await getCollection(
+				'docs',
+				(e) => !!e.data.tab && e.id.split('/').slice(0, -1).join('/') === dir,
+			)
+		).sort((a, b) => (a.data.sidebar.order ?? 0) - (b.data.sidebar.order ?? 0))
+	: [];
+---
+
+<Default />
+{
+	tabs.length > 1 && (
+		<nav class="page-tabs" aria-label="ページの切り替え">
+			{tabs.map((t) => (
+				<a href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/${t.id}/`} aria-current={t.id === entry.id ? 'page' : undefined}>
+					{t.data.tab}
+				</a>
+			))}
+		</nav>
+	)
+}
+
+<style>
+	.page-tabs {
+		display: flex;
+		gap: 0.25rem;
+		margin-top: 1rem;
+		border-bottom: 1px solid var(--sl-color-gray-5);
+	}
+	.page-tabs a {
+		padding: 0.5rem 1rem;
+		color: var(--sl-color-gray-2);
+		text-decoration: none;
+		border-bottom: 2px solid transparent;
+		margin-bottom: -1px;
+	}
+	.page-tabs a:hover {
+		color: var(--sl-color-white);
+	}
+	.page-tabs a[aria-current='page'] {
+		color: var(--sl-color-text-accent);
+		border-bottom-color: var(--sl-color-text-accent);
+		font-weight: 600;
+	}
+</style>

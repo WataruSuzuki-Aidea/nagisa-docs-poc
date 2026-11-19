@@ -1,0 +1,94 @@
+---
+// トークンの CSS（Figma から書き出したもの）を読み、色トークンの一覧を表にする。
+// Supernova の「SNDesignTokens」ブロックの置き換え。
+import css from '../data/tokens/supernova.tailwind.css?raw';
+
+interface Props {
+	/** alias: bg/text/border-color-*、global: color-global-color-* */
+	kind: 'alias' | 'global';
+	/** alias のときに絞り込む接頭辞（例: bg-color） */
+	prefix?: string;
+}
+const { kind, prefix } = Astro.props;
+
+type Token = { name: string; raw: string; value: string; note: string };
+
+const tokens: Token[] = [];
+const globals = new Map<string, string>();
+let note = '';
+for (const line of css.split('\n')) {
+	const comment = line.match(/^\s*\/\*\s*(.*?)\s*\*\/\s*$/);
+	if (comment) {
+		note = comment[1];
+		continue;
+	}
+	const decl = line.match(/^\s*--([\w-]+):\s*(.+?);\s*$/);
+	if (!decl) continue;
+	const [, name, raw] = decl;
+	if (name.startsWith('color-global-color-')) globals.set(name, raw);
+	tokens.push({ name, raw, value: raw, note });
+	note = '';
+}
+for (const token of tokens) {
+	const ref = token.raw.match(/^var\(--([\w-]+)\)$/);
+	if (ref && globals.has(ref[1])) token.value = globals.get(ref[1])!;
+}
+
+const rows =
+	kind === 'global'
+		? tokens.filter((t) => t.name.startsWith('color-global-color-'))
+		: tokens.filter((t) => /^(bg|text|border)-color-/.test(t.name) && (!prefix || t.name.startsWith(prefix)));
+---
+
+<table class="token-table">
+	<thead>
+		<tr>
+			<th>見本</th>
+			<th>トークン</th>
+			<th>{kind === 'alias' ? '参照先' : '値'}</th>
+			{kind === 'alias' && <th>説明</th>}
+		</tr>
+	</thead>
+	<tbody>
+		{
+			rows.map((t) => (
+				<tr>
+					<td>
+						<span class="swatch" style={`background:${t.value}`} />
+					</td>
+					<td>
+						<code>--{t.name}</code>
+					</td>
+					<td>
+						<code>{kind === 'alias' ? t.raw.replace(/^var\(--(.+)\)$/, '$1') : t.raw}</code>
+					</td>
+					{kind === 'alias' && <td>{t.note}</td>}
+				</tr>
+			))
+		}
+	</tbody>
+</table>
+<p class="token-count">{rows.length} 件</p>
+
+<style>
+	.swatch {
+		display: inline-block;
+		width: 1.5rem;
+		height: 1.5rem;
+		border-radius: 4px;
+		border: 1px solid var(--sl-color-gray-5);
+	}
+	.token-table {
+		display: block;
+		overflow-x: auto;
+	}
+	.token-table code {
+		white-space: nowrap;
+	}
+	.token-table td:nth-child(4) {
+		min-width: 18em;
+	}
+	.token-count {
+		color: var(--sl-color-gray-3);
+	}
+</style>
